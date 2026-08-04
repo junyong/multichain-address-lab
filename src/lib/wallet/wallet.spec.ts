@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { deriveEvmAccounts } from './evm-hd.js';
+import { deriveEvmAccounts, deriveSingleEvmAccount } from './evm-hd.js';
 import { createMnemonic, isValidMnemonic, normalizeMnemonic, parseMaxIndex } from './mnemonic.js';
 import { deriveTronAccounts } from './tron-address.js';
 
@@ -40,6 +40,14 @@ describe('HD derivation', () => {
 			privateKey: '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
 		});
 	});
+
+	test('derives a single EVM account at specific index', () => {
+		const account = deriveSingleEvmAccount(TEST_MNEMONIC, 300);
+		expect(account.index).toBe(300);
+		expect(account.path).toBe("m/44'/60'/0'/0/300");
+		expect(account.address).toMatch(/^0x[0-9a-fA-F]{40}$/);
+	});
+
 
 	test('derives inclusive indexes and deterministic results', () => {
 		const first = deriveEvmAccounts(TEST_MNEMONIC, 10);

@@ -63,7 +63,9 @@
 			<Card.Root>
 				<Card.Header>
 					<Card.Title>변환 입력</Card.Title>
-					<Card.Description>EVM 주소(0x…), TRON 주소(T…), 또는 TRON Hex(41…)를 입력하세요.</Card.Description>
+					<Card.Description
+						>EVM 주소(0x…), TRON 주소(T…), 또는 TRON Hex(41…)를 입력하세요.</Card.Description
+					>
 				</Card.Header>
 				<Card.Content class="stack">
 					<form onsubmit={handleConvert} class="form-stack">
@@ -85,11 +87,17 @@
 							</Button>
 						</div>
 
-						<div class="pt-2 border-t border-border">
-							<span class="text-xs text-muted-foreground block mb-2 font-medium">샘플 입력하기</span>
+						<div class="border-t border-border pt-2">
+							<span class="mb-2 block text-xs font-medium text-muted-foreground">샘플 입력하기</span
+							>
 							<div class="flex flex-wrap gap-2">
-								<Button variant="outline" size="sm" type="button" onclick={() => loadSample(SAMPLE_EVM)}>
-									<Sparkles class="size-3 mr-1" /> EVM 주소 예시
+								<Button
+									variant="outline"
+									size="sm"
+									type="button"
+									onclick={() => loadSample(SAMPLE_EVM)}
+								>
+									<Sparkles class="mr-1 size-3" /> EVM 주소 예시
 								</Button>
 							</div>
 						</div>
@@ -101,7 +109,8 @@
 				<Info />
 				<AlertTitle>fromHex() 인코딩 관련 안내</AlertTitle>
 				<AlertDescription>
-					<code>TronWeb.address.fromHex(evmAddress)</code>는 20바이트 주소에 <code>0x41</code> 헤더를 붙여 Base58Check로 변환한 것입니다. 니모닉 HD 파생(`coin_type 195`) 주소와는 다릅니다.
+					<code>TronWeb.address.fromHex(evmAddress)</code>는 20바이트 주소에 <code>0x41</code> 헤더를
+					붙여 Base58Check로 변환한 것입니다. 니모닉 HD 파생(`coin_type 195`) 주소와는 다릅니다.
 				</AlertDescription>
 			</Alert>
 		</div>
@@ -129,11 +138,13 @@
 						<!-- TRON Base58Check -->
 						<div class="balance-row">
 							<div>
-								<div class="flex items-center gap-2 mb-1">
+								<div class="mb-1 flex items-center gap-2">
 									<Badge variant="outline">TRON Base58Check</Badge>
 									<span class="text-xs text-muted-foreground">TronWeb.address.fromHex() 결과</span>
 								</div>
-								<code class="mono text-sm block font-semibold text-primary select-all">{result.tronBase58Address}</code>
+								<code class="mono block text-sm font-semibold text-primary select-all"
+									>{result.tronBase58Address}</code
+								>
 							</div>
 							<Button
 								variant="ghost"
@@ -141,18 +152,22 @@
 								aria-label="TRON 주소 복사"
 								onclick={() => copyToClipboard(result!.tronBase58Address, 'tronBase58')}
 							>
-								{#if copiedField === 'tronBase58'}<Check class="size-4 text-emerald-500" />{:else}<Copy class="size-4" />{/if}
+								{#if copiedField === 'tronBase58'}<Check
+										class="size-4 text-emerald-500"
+									/>{:else}<Copy class="size-4" />{/if}
 							</Button>
 						</div>
 
 						<!-- EVM Checksum -->
 						<div class="balance-row">
 							<div>
-								<div class="flex items-center gap-2 mb-1">
+								<div class="mb-1 flex items-center gap-2">
 									<Badge variant="outline">EVM Checksum (EIP-55)</Badge>
 									<span class="text-xs text-muted-foreground">대소문자 혼용 체크섬</span>
 								</div>
-								<code class="mono text-sm block font-semibold select-all">{result.evmChecksumAddress}</code>
+								<code class="mono block text-sm font-semibold select-all"
+									>{result.evmChecksumAddress}</code
+								>
 							</div>
 							<Button
 								variant="ghost"
@@ -160,18 +175,22 @@
 								aria-label="EVM Checksum 주소 복사"
 								onclick={() => copyToClipboard(result!.evmChecksumAddress, 'evmChecksum')}
 							>
-								{#if copiedField === 'evmChecksum'}<Check class="size-4 text-emerald-500" />{:else}<Copy class="size-4" />{/if}
+								{#if copiedField === 'evmChecksum'}<Check
+										class="size-4 text-emerald-500"
+									/>{:else}<Copy class="size-4" />{/if}
 							</Button>
 						</div>
 
 						<!-- TRON Hex -->
 						<div class="balance-row">
 							<div>
-								<div class="flex items-center gap-2 mb-1">
+								<div class="mb-1 flex items-center gap-2">
 									<Badge variant="outline">TRON Hex (41…)</Badge>
 									<span class="text-xs text-muted-foreground">41 접두사 21바이트 헥스</span>
 								</div>
-								<code class="mono text-xs block text-muted-foreground select-all">{result.tronHexAddress}</code>
+								<code class="mono block text-xs text-muted-foreground select-all"
+									>{result.tronHexAddress}</code
+								>
 							</div>
 							<Button
 								variant="ghost"
@@ -179,18 +198,22 @@
 								aria-label="TRON Hex 주소 복사"
 								onclick={() => copyToClipboard(result!.tronHexAddress, 'tronHex')}
 							>
-								{#if copiedField === 'tronHex'}<Check class="size-4 text-emerald-500" />{:else}<Copy class="size-4" />{/if}
+								{#if copiedField === 'tronHex'}<Check class="size-4 text-emerald-500" />{:else}<Copy
+										class="size-4"
+									/>{/if}
 							</Button>
 						</div>
 
 						<!-- ABI Word -->
 						<div class="balance-row">
 							<div>
-								<div class="flex items-center gap-2 mb-1">
+								<div class="mb-1 flex items-center gap-2">
 									<Badge variant="outline">ABI 32-Byte Word</Badge>
 									<span class="text-xs text-muted-foreground">컨트랙트 파라미터 패딩 (64자)</span>
 								</div>
-								<code class="mono text-xs block text-muted-foreground select-all break-all">{result.abiWord}</code>
+								<code class="mono block text-xs break-all text-muted-foreground select-all"
+									>{result.abiWord}</code
+								>
 							</div>
 							<Button
 								variant="ghost"
@@ -198,7 +221,9 @@
 								aria-label="ABI Word 복사"
 								onclick={() => copyToClipboard(result!.abiWord, 'abiWord')}
 							>
-								{#if copiedField === 'abiWord'}<Check class="size-4 text-emerald-500" />{:else}<Copy class="size-4" />{/if}
+								{#if copiedField === 'abiWord'}<Check class="size-4 text-emerald-500" />{:else}<Copy
+										class="size-4"
+									/>{/if}
 							</Button>
 						</div>
 					</div>

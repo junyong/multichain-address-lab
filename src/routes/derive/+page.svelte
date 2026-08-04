@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { Beaker, CircleAlert, RefreshCw, ShieldCheck, Sparkles } from '@lucide/svelte';
+	import { dev } from '$app/environment';
+	import { Beaker, CircleAlert, RefreshCw, ShieldCheck, Sparkles, Target } from '@lucide/svelte';
 	import SensitiveValue from '$lib/components/SensitiveValue.svelte';
 	import { Alert, AlertDescription, AlertTitle } from '$lib/components/ui/alert';
 	import { Badge } from '$lib/components/ui/badge';
@@ -9,14 +10,20 @@
 	import * as Table from '$lib/components/ui/table';
 	import * as Tabs from '$lib/components/ui/tabs';
 	import { Textarea } from '$lib/components/ui/textarea';
-	import { deriveEvmAccounts, type EvmDerivedAccount } from '$lib/wallet/evm-hd';
+	import {
+		deriveEvmAccounts,
+		deriveSingleEvmAccount,
+		type EvmDerivedAccount
+	} from '$lib/wallet/evm-hd';
 	import { createMnemonic, parseMaxIndex } from '$lib/wallet/mnemonic';
 	import { deriveTronAccounts, type TronDerivedAccount } from '$lib/wallet/tron-address';
 
 	let mnemonic = $state('');
 	let maxIndex = $state('10');
+	let selected = $state('300');
 	let error = $state('');
 	let evmRows = $state<EvmDerivedAccount[]>([]);
+	let singleEvmRow = $state<EvmDerivedAccount | null>(null);
 	let tronRows = $state<TronDerivedAccount[]>([]);
 	let activeTab = $state('generate');
 
@@ -38,6 +45,21 @@
 		}
 	}
 
+	function deriveSingleEvm() {
+		error = '';
+		try {
+			const idx = Number.parseInt(selected, 10);
+			if (Number.isNaN(idx) || idx < 0 || idx > 1_000_000) {
+				throw new Error('selectedIndex는 0부터 1,000,000 사이의 정수여야 합니다.');
+			}
+			singleEvmRow = deriveSingleEvmAccount(mnemonic, idx);
+			activeTab = 'evm';
+		} catch (cause) {
+			error = cause instanceof Error ? cause.message : '단일 파생에 실패했습니다.';
+			singleEvmRow = null;
+		}
+	}
+
 	function deriveTron() {
 		error = '';
 		try {
@@ -52,8 +74,10 @@
 	function reset() {
 		mnemonic = '';
 		maxIndex = '10';
+		selected = '300';
 		error = '';
 		evmRows = [];
+		singleEvmRow = null;
 		tronRows = [];
 		activeTab = 'generate';
 	}
@@ -61,7 +85,9 @@
 
 <svelte:head>
 	<title>HD 파생 · Multichain Address Lab</title>
-	<meta http-equiv="content-security-policy" content="connect-src 'none'" />
+	{#if !dev}
+		<meta http-equiv="content-security-policy" content="connect-src 'none'" />
+	{/if}
 </svelte:head>
 
 <main class="tool-shell">
@@ -94,25 +120,34 @@
 							spellcheck="false"
 						/>
 						<Button size="sm" variant="secondary" onclick={generate}>
-							<Sparkles class="size-4 mr-1" /> 새 mnemonic 생성
+							<Sparkles class="mr-1 size-4" /> 새 mnemonic 생성
 						</Button>
 					</div>
 
 					<div class="field">
-						<label for="derive-index">maxIndex</label>
-						<Input
-							id="derive-index"
-							bind:value={maxIndex}
-							inputmode="numeric"
-						/>
+						<label for="derive-index">maxIndex (범위 파생)</label>
+						<Input id="derive-index" bind:value={maxIndex} inputmode="numeric" />
 					</div>
-
-					{#if error}<p class="error-text" role="alert">{error}</p>{/if}
 
 					<div class="grid grid-cols-2 gap-2 pt-1">
 						<Button onclick={deriveEvm}>EVM 파생</Button>
 						<Button onclick={deriveTron} variant="outline">TRON 파생</Button>
 					</div>
+
+					<div class="field border-t border-border pt-2">
+						<label for="derive-selected-index">selectedIndex (단일 index 파생)</label>
+						<Input
+							id="derive-selected-index"
+							bind:value={selected}
+							inputmode="numeric"
+							placeholder="예: 300"
+						/>
+						<Button onclick={deriveSingleEvm} variant="secondary" class="mt-1">
+							<Target class="mr-1 size-4" /> index #{selected || 0} 단일 파생
+						</Button>
+					</div>
+
+					{#if error}<p class="error-text" role="alert">{error}</p>{/if}
 				</Card.Content>
 			</Card.Root>
 
@@ -132,11 +167,15 @@
 						<Tabs.Trigger value="generate">랜덤 생성</Tabs.Trigger>
 						<Tabs.Trigger value="evm">
 							EVM 주소·키
-							{#if evmRows.length}<Badge variant="secondary" class="ml-1.5">{evmRows.length}</Badge>{/if}
+							{#if evmRows.length || singleEvmRow}<Badge variant="secondary" class="ml-1.5"
+									>{evmRows.length + (singleEvmRow ? 1 : 0)}</Badge
+								>{/if}
 						</Tabs.Trigger>
 						<Tabs.Trigger value="tron">
 							TRON 주소
-							{#if tronRows.length}<Badge variant="secondary" class="ml-1.5">{tronRows.length}</Badge>{/if}
+							{#if tronRows.length}<Badge variant="secondary" class="ml-1.5"
+									>{tronRows.length}</Badge
+								>{/if}
 						</Tabs.Trigger>
 					</Tabs.List>
 
@@ -144,7 +183,9 @@
 						<div class="stack">
 							<div>
 								<Card.Title class="text-base">12단어 mnemonic 생성 결과</Card.Title>
-								<Card.Description>브라우저 보안 난수에서 128-bit entropy를 생성합니다.</Card.Description>
+								<Card.Description
+									>브라우저 보안 난수에서 128-bit entropy를 생성합니다.</Card.Description
+								>
 							</div>
 							{#if mnemonic}
 								<div class="mnemonic-output" data-mnemonic-output>{mnemonic}</div>
@@ -169,12 +210,43 @@
 
 					<Tabs.Content value="evm" class="mt-4">
 						<div class="stack">
+							{#if singleEvmRow}
+								<Card.Root class="border-primary/40 bg-primary/5">
+									<Card.Header class="pb-2">
+										<div class="flex items-center justify-between">
+											<Badge variant="default"
+												><Target class="mr-1 size-3" /> 단일 Index #{singleEvmRow.index} 조회 결과</Badge
+											>
+											<code class="mono text-xs text-muted-foreground">{singleEvmRow.path}</code>
+										</div>
+									</Card.Header>
+									<Card.Content class="stack">
+										<div class="balance-row">
+											<div>
+												<span class="mb-0.5 block text-xs text-muted-foreground">EVM 주소</span>
+												<code class="mono text-sm font-semibold select-all"
+													>{singleEvmRow.address}</code
+												>
+											</div>
+											<div>
+												<span class="mb-0.5 block text-xs text-muted-foreground">Private Key</span>
+												<SensitiveValue
+													value={singleEvmRow.privateKey}
+													label={`index ${singleEvmRow.index} private key`}
+												/>
+											</div>
+										</div>
+									</Card.Content>
+								</Card.Root>
+							{/if}
+
 							<div class="result-header">
 								<div>
-									<Card.Title class="text-base">EVM HD 주소와 private key</Card.Title>
+									<Card.Title class="text-base">EVM HD 주소목록 (범위 파생)</Card.Title>
 									<Card.Description>m/44'/60'/0'/0/{'{index}'} · maxIndex 포함</Card.Description>
 								</div>
-								{#if evmRows.length}<Badge variant="outline">{evmRows.length}개 결과</Badge>{/if}
+								{#if evmRows.length}<Badge variant="outline">{evmRows.length}개 범위 결과</Badge
+									>{/if}
 							</div>
 							{#if evmRows.length}
 								<div class="table-wrap">
@@ -204,12 +276,15 @@
 										</Table.Body>
 									</Table.Root>
 								</div>
-							{:else}
+							{:else if !singleEvmRow}
 								<div class="empty-state">
 									<div>
 										<ShieldCheck class="mx-auto mb-3 size-8" />
 										<strong>EVM 파생 결과가 없습니다</strong>
-										<span>좌측 사이드바에 Mnemonic을 입력하고 [EVM 파생] 버튼을 누르세요.</span>
+										<span
+											>좌측 사이드바에 Mnemonic을 입력하고 [EVM 범위 파생] 또는 [단일 EVM 파생]
+											버튼을 누르세요.</span
+										>
 									</div>
 								</div>
 							{/if}
@@ -253,7 +328,9 @@
 									<div>
 										<ShieldCheck class="mx-auto mb-3 size-8" />
 										<strong>TRON 파생 결과가 없습니다</strong>
-										<span>좌측 사이드바에 Mnemonic을 입력하고 [TRON 파생] 버튼을 누르세요.</span>
+										<span
+											>좌측 사이드바에 Mnemonic을 입력하고 [TRON 범위 파생] 버튼을 누르세요.</span
+										>
 									</div>
 								</div>
 							{/if}
@@ -278,4 +355,3 @@
 		color: oklch(0.86 0.1 190);
 	}
 </style>
-
