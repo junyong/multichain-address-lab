@@ -1,6 +1,13 @@
 <script lang="ts">
 	import { base } from '$app/paths';
-	import { Activity, ArrowLeftRight, ArrowUpRight, KeyRound, ShieldCheck, Wifi } from '@lucide/svelte';
+	import {
+		Activity,
+		ArrowLeftRight,
+		ArrowUpRight,
+		KeyRound,
+		ShieldCheck,
+		Wifi
+	} from '@lucide/svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import * as Card from '$lib/components/ui/card';
 </script>

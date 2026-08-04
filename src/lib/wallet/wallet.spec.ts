@@ -48,7 +48,6 @@ describe('HD derivation', () => {
 		expect(account.address).toMatch(/^0x[0-9a-fA-F]{40}$/);
 	});
 
-
 	test('derives inclusive indexes and deterministic results', () => {
 		const first = deriveEvmAccounts(TEST_MNEMONIC, 10);
 		const second = deriveEvmAccounts(TEST_MNEMONIC, 10);

@@ -62,4 +62,3 @@ export function deriveSingleEvmAccount(mnemonic: string, index: number): EvmDeri
 		root.wipePrivateData();
 	}
 }
-

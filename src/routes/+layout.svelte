@@ -2,7 +2,13 @@
 	import './layout.css';
 	import { base } from '$app/paths';
 	import { page } from '$app/state';
-	import { ArrowLeftRight, FlaskConical, LayoutDashboard, ScanSearch, ShieldCheck } from '@lucide/svelte';
+	import {
+		ArrowLeftRight,
+		FlaskConical,
+		LayoutDashboard,
+		ScanSearch,
+		ShieldCheck
+	} from '@lucide/svelte';
 	import favicon from '$lib/assets/favicon.png';
 	import logo from '$lib/assets/logo.png';
 
