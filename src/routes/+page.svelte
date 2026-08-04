@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { base } from '$app/paths';
-	import { Activity, ArrowUpRight, KeyRound, Plus, ShieldCheck, Wifi } from '@lucide/svelte';
+	import { Activity, ArrowLeftRight, ArrowUpRight, KeyRound, ShieldCheck, Wifi } from '@lucide/svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import * as Card from '$lib/components/ui/card';
 </script>
@@ -51,14 +51,21 @@
 			</Card.Root>
 		</a>
 
-		<Card.Root class="menu-widget placeholder-widget">
-			<Card.Content class="placeholder-content">
-				<div class="widget-icon muted"><Plus /></div>
-				<div>
-					<strong>위젯 추가 예정</strong>
-					<p>새 도구가 이 영역에 추가됩니다.</p>
-				</div>
-			</Card.Content>
-		</Card.Root>
+		<a class="widget-link" href={`${base}/convert/`} data-sveltekit-reload>
+			<Card.Root class="menu-widget derive-widget">
+				<Card.Header>
+					<div class="widget-topline">
+						<div class="widget-icon"><ArrowLeftRight /></div>
+						<ArrowUpRight class="widget-arrow" />
+					</div>
+					<Card.Title>주소 변환</Card.Title>
+					<Card.Description>EVM Hex ↔ TRON Base58Check / Hex</Card.Description>
+				</Card.Header>
+				<Card.Footer class="widget-footer">
+					<span><ShieldCheck /> Local conversion</span>
+					<Badge variant="secondary">OFFLINE</Badge>
+				</Card.Footer>
+			</Card.Root>
+		</a>
 	</section>
 </main>
