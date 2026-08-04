@@ -99,6 +99,14 @@
 								>
 									<Sparkles class="mr-1 size-3" /> EVM 주소 예시
 								</Button>
+								<Button
+									variant="outline"
+									size="sm"
+									type="button"
+									onclick={() => loadSample(SAMPLE_TRON)}
+								>
+									<Sparkles class="mr-1 size-3" /> TRON 주소 예시
+								</Button>
 							</div>
 						</div>
 					</form>

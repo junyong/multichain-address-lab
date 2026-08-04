@@ -45,7 +45,7 @@ export function convertAddress(input: string): AddressConversionResult {
 			};
 		} catch (cause) {
 			if (cause instanceof Error && cause.message.includes('TRON')) throw cause;
-			throw new Error('TRON Base58Check 주소 디코딩에 실패했습니다.');
+			throw new Error('TRON Base58Check 주소 디코딩에 실패했습니다.', { cause });
 		}
 	}
 
