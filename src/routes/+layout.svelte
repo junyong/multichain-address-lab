@@ -3,7 +3,8 @@
 	import { base } from '$app/paths';
 	import { page } from '$app/state';
 	import { ArrowLeftRight, FlaskConical, LayoutDashboard, ScanSearch, ShieldCheck } from '@lucide/svelte';
-	import favicon from '$lib/assets/favicon.svg';
+	import favicon from '$lib/assets/favicon.png';
+	import logo from '$lib/assets/logo.png';
 
 	let { children } = $props();
 
@@ -16,7 +17,7 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="icon" type="image/png" href={favicon} />
 	<meta
 		name="description"
 		content="Ethereum, BSC, TRON 주소의 잔액과 HD 파생 결과를 확인하는 읽기 전용 도구"
@@ -26,7 +27,7 @@
 <div class="app-shell">
 	<aside class="sidebar">
 		<a class="sidebar-brand" href={`${base}/`} data-sveltekit-reload>
-			<span class="brand-mark">MAL</span>
+			<img src={logo} alt="Multichain Address Lab Logo" class="brand-logo-img" />
 			<span>
 				<strong>Multichain</strong>
 				<small>Address Lab</small>

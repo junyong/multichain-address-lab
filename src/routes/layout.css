@@ -148,6 +148,14 @@ code,
 	font-weight: 850;
 }
 
+.brand-logo-img {
+	width: 2.2rem;
+	height: 2.2rem;
+	border-radius: 0.65rem;
+	object-fit: cover;
+	box-shadow: 0 0 12px oklch(0.7 0.2 190 / 25%);
+}
+
 .sidebar-nav {
 	display: grid;
 	gap: 0.35rem;
